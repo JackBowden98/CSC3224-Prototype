@@ -132,7 +132,7 @@ public class CharacterController2D : MonoBehaviour
 		}
 		if (wallJump)
 		{
-			m_Rigidbody2D.velocity = new Vector2(xWallForce * -Input.GetAxisRaw("Horizontal"), yWallForce);
+			m_Rigidbody2D.velocity = new Vector2(-xWallForce, yWallForce);
 		}
 		if (!m_Grounded && !m_WallSliding && !jump)
         {
@@ -149,7 +149,6 @@ public class CharacterController2D : MonoBehaviour
     {
 		return falling;
 	}
-
 
 	private void Flip()
 	{
