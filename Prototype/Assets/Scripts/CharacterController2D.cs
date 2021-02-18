@@ -8,19 +8,34 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
 	[SerializeField] private LayerMask m_WhatIsGround;							// A mask determining what is ground to the character
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
-	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
+	[SerializeField] private Transform m_CeilingCheck;                          // A position marking where to check for ceilings
+	[SerializeField] private Transform m_FrontCheck;							// A position marking where to check for walls
 
-	const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
-	private bool m_Grounded;            // Whether or not the player is grounded.
-	const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
+	const float k_GroundedRadius = .2f;		// Radius of the overlap circle to determine if grounded
+	private bool m_Grounded;				// Whether or not the player is grounded.
+	const float k_CeilingRadius = .2f;      // Radius of the overlap circle to determine if the player can stand up
+
+	bool isTouchingFront;
+	bool m_WallSliding;
+	const float k_WallRadius = .2f;      // Radius of the overlap circle to determine if next to wall
+	public float wallSlidingSpeed;
+
+	private bool falling;
+
+	private bool wallJump;
+	public float xWallForce;
+	public float yWallForce;
+	public float wallJumpForceDuration;
+
 	private Rigidbody2D m_Rigidbody2D;
-	private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+	private bool m_FacingRight = true;		// For determining which way the player is currently facing.
 	private Vector3 m_Velocity = Vector3.zero;
 
 	[Header("Events")]
 	[Space]
 
 	public UnityEvent OnLandEvent;
+	public UnityEvent OnSlideEvent;
 
 
 	private void Awake()
@@ -29,6 +44,9 @@ public class CharacterController2D : MonoBehaviour
 
 		if (OnLandEvent == null)
 			OnLandEvent = new UnityEvent();
+
+		if (OnSlideEvent == null)
+			OnSlideEvent = new UnityEvent();
 
 	}
 
@@ -39,14 +57,33 @@ public class CharacterController2D : MonoBehaviour
 
 		// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 		// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-		Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-		for (int i = 0; i < colliders.Length; i++)
+		Collider2D[] groundColliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+		for (int i = 0; i < groundColliders.Length; i++)
 		{
-			if (colliders[i].gameObject != gameObject)
+			if (groundColliders[i].gameObject != gameObject)
 			{
 				m_Grounded = true;
 				if (!wasGrounded)
 					OnLandEvent.Invoke();
+			}
+		}
+
+		bool wasTouchingWall = isTouchingFront;
+		isTouchingFront = false;
+		m_WallSliding = false;
+		falling = false;
+
+		Collider2D[] wallColliders = Physics2D.OverlapCircleAll(m_FrontCheck.position, k_WallRadius, m_WhatIsGround);
+		for (int i = 0; i < wallColliders.Length; i++)
+		{
+			if (wallColliders[i].gameObject != gameObject)
+			{
+				isTouchingFront = true;
+				if (!m_Grounded && isTouchingFront && Input.GetAxis("Horizontal") != 0)
+                {
+					if (!wasTouchingWall)
+						OnSlideEvent.Invoke();
+				}
 			}
 		}
 	}
@@ -75,6 +112,11 @@ public class CharacterController2D : MonoBehaviour
 				Flip();
 			}
 		}
+		if (!m_Grounded && isTouchingFront && Input.GetAxis("Horizontal") != 0)
+		{
+			m_WallSliding = true;
+			m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, Mathf.Clamp(m_Rigidbody2D.velocity.y, -wallSlidingSpeed, float.MaxValue));
+		}
 		// If the player should jump...
 		if (m_Grounded && jump)
 		{
@@ -82,6 +124,30 @@ public class CharacterController2D : MonoBehaviour
 			m_Grounded = false;
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
+		if (m_WallSliding && jump)
+		{
+			m_WallSliding = false;
+			wallJump = true;
+			Invoke("SetWallJumpFalse", wallJumpForceDuration);
+		}
+		if (wallJump)
+		{
+			m_Rigidbody2D.velocity = new Vector2(xWallForce * -Input.GetAxisRaw("Horizontal"), yWallForce);
+		}
+		if (!m_Grounded && !m_WallSliding && !jump)
+        {
+			falling = true;
+        }
+	}
+
+	private void SetWallJumpFalse()
+    {
+		wallJump = false;
+    }
+
+	public bool Falling()
+    {
+		return falling;
 	}
 
 

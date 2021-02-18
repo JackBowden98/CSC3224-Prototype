@@ -23,17 +23,28 @@ public class PlayerMovement : MonoBehaviour {
 		{
 			jump = true;
 			animator.SetBool("IsJumping", true);
+			animator.SetBool("IsSliding", false);
+		}
+
+		if (controller.Falling())
+        {
+			animator.SetBool("IsFalling", true);
+			animator.SetBool("IsSliding", false);
 		}
 	}
 
 	public void OnLanding ()
 	{
 		animator.SetBool("IsJumping", false);
+		animator.SetBool("IsSliding", false);
+		animator.SetBool("IsFalling", false);
 	}
 
-	public void OnCrouching (bool isCrouching)
+	public void OnSliding()
 	{
-		animator.SetBool("IsCrouching", isCrouching);
+		animator.SetBool("IsSliding", true);
+		animator.SetBool("IsJumping", false);
+		animator.SetBool("IsFalling", false);
 	}
 
 	void FixedUpdate ()
