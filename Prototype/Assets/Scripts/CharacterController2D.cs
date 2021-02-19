@@ -132,7 +132,7 @@ public class CharacterController2D : MonoBehaviour
 		}
 		if (wallJump)
 		{
-			m_Rigidbody2D.velocity = new Vector2(-xWallForce, yWallForce);
+			m_Rigidbody2D.velocity = new Vector2(-Input.GetAxis("Horizontal") * xWallForce, yWallForce);
 		}
 		if (!m_Grounded && !m_WallSliding && !jump)
         {
