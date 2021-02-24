@@ -1144,7 +1144,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -1162,19 +1162,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08f91df3bd212f429df17f53ce2f364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_JumpForce: 700
+  m_JumpForce: 800
   m_MovementSmoothing: 0.05
-  m_AirControl: 1
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 567
+    m_Bits: 535
   m_GroundCheck: {fileID: 1007352555}
   m_CeilingCheck: {fileID: 1574803884}
   m_FrontCheck: {fileID: 1230588970}
   wallSlidingSpeed: 2.5
   xWallForce: 10
   yWallForce: 10
-  wallJumpForceDuration: 0.1
+  wallJumpForceDuration: 0.16
   OnLandEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1753,7 +1752,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1230588969}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.517, y: -0.119, z: 0}
+  m_LocalPosition: {x: 0.64, y: -0.119, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 820667352}

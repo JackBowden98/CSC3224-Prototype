@@ -3,9 +3,8 @@ using UnityEngine.Events;
 
 public class CharacterController2D : MonoBehaviour
 {
-	[SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
+	[SerializeField] public float m_JumpForce = 400f;							// Amount of force added when the player jumps.
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
-	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
 	[SerializeField] private LayerMask m_WhatIsGround;							// A mask determining what is ground to the character
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_CeilingCheck;                          // A position marking where to check for ceilings
@@ -21,6 +20,7 @@ public class CharacterController2D : MonoBehaviour
 	public float wallSlidingSpeed;
 
 	private bool falling;
+	private bool m_AirControl = false;
 
 	private bool wallJump;
 	public float xWallForce;
@@ -28,7 +28,8 @@ public class CharacterController2D : MonoBehaviour
 	public float wallJumpForceDuration;
 
 	private Rigidbody2D m_Rigidbody2D;
-	private bool m_FacingRight = true;		// For determining which way the player is currently facing.
+	private bool m_FacingRight = true;
+	private int facingDirection = 1;
 	private Vector3 m_Velocity = Vector3.zero;
 
 	[Header("Events")]
@@ -40,6 +41,7 @@ public class CharacterController2D : MonoBehaviour
 
 	private void Awake()
 	{
+		m_AirControl = true;
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
 		if (OnLandEvent == null)
@@ -112,7 +114,7 @@ public class CharacterController2D : MonoBehaviour
 				Flip();
 			}
 		}
-		if (!m_Grounded && isTouchingFront && Input.GetAxis("Horizontal") != 0)
+		if (!m_Grounded && isTouchingFront)
 		{
 			m_WallSliding = true;
 			m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, Mathf.Clamp(m_Rigidbody2D.velocity.y, -wallSlidingSpeed, float.MaxValue));
@@ -128,11 +130,13 @@ public class CharacterController2D : MonoBehaviour
 		{
 			m_WallSliding = false;
 			wallJump = true;
+			m_AirControl = false;
+			Flip();
 			Invoke("SetWallJumpFalse", wallJumpForceDuration);
 		}
 		if (wallJump)
 		{
-			m_Rigidbody2D.velocity = new Vector2(-Input.GetAxis("Horizontal") * xWallForce, yWallForce);
+			m_Rigidbody2D.velocity = new Vector2(facingDirection * xWallForce, yWallForce);
 		}
 		if (!m_Grounded && !m_WallSliding && !jump)
         {
@@ -143,7 +147,8 @@ public class CharacterController2D : MonoBehaviour
 	private void SetWallJumpFalse()
     {
 		wallJump = false;
-    }
+		m_AirControl = true;
+	}
 
 	public bool Falling()
     {
@@ -154,6 +159,7 @@ public class CharacterController2D : MonoBehaviour
 	{
 		// Switch the way the player is labelled as facing.
 		m_FacingRight = !m_FacingRight;
+		facingDirection *= -1;
 
 		// Multiply the player's x local scale by -1.
 		Vector3 theScale = transform.localScale;
@@ -168,5 +174,11 @@ public class CharacterController2D : MonoBehaviour
 			Destroy(collision.gameObject);
 
 		}
+	}
+
+	private void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.blue;
+		Gizmos.DrawSphere(m_FrontCheck.position, k_WallRadius);
 	}
 }
