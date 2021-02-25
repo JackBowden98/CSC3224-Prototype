@@ -19,6 +19,9 @@ public class CharacterController2D : MonoBehaviour
 	const float k_WallRadius = .2f;      // Radius of the overlap circle to determine if next to wall
 	public float wallSlidingSpeed;
 
+	// if flipping is allowed
+	public bool canFlip = true;
+
 	private bool falling;
 	private bool m_AirControl = false;
 
@@ -155,16 +158,34 @@ public class CharacterController2D : MonoBehaviour
 		return falling;
 	}
 
+	public int GetFacingDirection()
+    {
+		return facingDirection;
+    }
+
 	private void Flip()
 	{
-		// Switch the way the player is labelled as facing.
-		m_FacingRight = !m_FacingRight;
-		facingDirection *= -1;
+		if (canFlip)
+        {
+			// Switch the way the player is labelled as facing.
+			m_FacingRight = !m_FacingRight;
+			facingDirection *= -1;
 
-		// Multiply the player's x local scale by -1.
-		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
-		transform.localScale = theScale;
+			// Multiply the player's x local scale by -1.
+			Vector3 theScale = transform.localScale;
+			theScale.x *= -1;
+			transform.localScale = theScale;
+        }
+	}
+
+	public void DisableFlip()
+    {
+		canFlip = false;
+    }
+
+	public void EnableFlip()
+	{
+		canFlip = true;
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -176,9 +197,9 @@ public class CharacterController2D : MonoBehaviour
 		}
 	}
 
-	private void OnDrawGizmosSelected()
-	{
-		Gizmos.color = Color.blue;
-		Gizmos.DrawSphere(m_FrontCheck.position, k_WallRadius);
-	}
+	//private void OnDrawGizmosSelected()
+	//{
+	//	Gizmos.color = Color.blue;
+	//	Gizmos.DrawSphere(m_FrontCheck.position, k_WallRadius);
+	//}
 }
