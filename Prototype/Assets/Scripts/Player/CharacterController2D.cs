@@ -35,6 +35,11 @@ public class CharacterController2D : MonoBehaviour
 	private int facingDirection = 1;
 	private Vector3 m_Velocity = Vector3.zero;
 
+	private bool knockback;
+	private float knockbackStartTime;
+	[SerializeField] private float knockbackDuration;
+	[SerializeField] private Vector2 knockbackSpeed;
+
 	[Header("Events")]
 	[Space]
 
@@ -55,7 +60,12 @@ public class CharacterController2D : MonoBehaviour
 
 	}
 
-	private void FixedUpdate()
+    private void Update()
+    {
+		CheckKnockback();
+	}
+
+    private void FixedUpdate()
 	{
 		bool wasGrounded = m_Grounded;
 		m_Grounded = false;
@@ -97,7 +107,7 @@ public class CharacterController2D : MonoBehaviour
 	public void Move(float move, bool jump)
 	{
 		//only control the player if grounded or airControl is turned on
-		if (m_Grounded || m_AirControl)
+		if (m_Grounded || m_AirControl && !knockback)
 		{
 			// Move the character by finding the target velocity
 			Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
@@ -147,6 +157,23 @@ public class CharacterController2D : MonoBehaviour
         }
 	}
 
+	public void KnockBack(int direction)
+    {
+		knockback = true;
+		knockbackStartTime = Time.time;
+		m_Rigidbody2D.velocity = new Vector2(knockbackSpeed.x * direction, knockbackSpeed.y);
+    }
+
+	private void CheckKnockback()
+    {
+		if (Time.time >= knockbackStartTime + knockbackDuration && knockback)
+        {
+			knockback = false;
+			m_Rigidbody2D.velocity = new Vector2(0.0f, m_Rigidbody2D.velocity.y);
+
+		}
+    }
+
 	private void SetWallJumpFalse()
     {
 		wallJump = false;
@@ -165,7 +192,7 @@ public class CharacterController2D : MonoBehaviour
 
 	private void Flip()
 	{
-		if (canFlip)
+		if (canFlip && !knockback)
         {
 			// Switch the way the player is labelled as facing.
 			m_FacingRight = !m_FacingRight;
@@ -197,9 +224,9 @@ public class CharacterController2D : MonoBehaviour
 		}
 	}
 
-	//private void OnDrawGizmosSelected()
-	//{
-	//	Gizmos.color = Color.blue;
-	//	Gizmos.DrawSphere(m_FrontCheck.position, k_WallRadius);
-	//}
+	private void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.blue;
+		Gizmos.DrawWireSphere(m_FrontCheck.position, k_WallRadius);
+	}
 }

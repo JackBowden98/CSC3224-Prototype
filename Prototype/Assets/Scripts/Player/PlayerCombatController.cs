@@ -25,10 +25,13 @@ public class PlayerCombatController : MonoBehaviour
 
     private Animator anim;
 
+    private CharacterController2D cc;
+
     private void Start()
     {
         anim = GetComponent<Animator>();
         anim.SetBool("CanAttack", combatEnabled);
+        cc = GetComponent<CharacterController2D>();
     }
 
     private void Update()
@@ -87,6 +90,22 @@ public class PlayerCombatController : MonoBehaviour
         isAttacking = false;
         anim.SetBool("IsAttacking", isAttacking);
         anim.SetBool("Attack", false);
+    }
+
+    private void Damage(float[] attackDetails)
+    {
+        int direction;
+
+        if (attackDetails[1] < transform.position.x)
+        {
+            direction = 1;
+        }
+        else
+        {
+            direction = -1;
+        }
+
+        cc.KnockBack(direction);
     }
 
     private void OnDrawGizmos()

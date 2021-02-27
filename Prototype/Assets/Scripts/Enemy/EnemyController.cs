@@ -35,6 +35,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private Vector2 knockbackSpeed;
     private float knockbackStartTime;
 
+    [SerializeField] private Transform applyDamageCheck;
+    [SerializeField] private float lastApplyDamageTime, applyDamageCooldown, applyDamage, applyDamageWidth, applyDamageHeight;
+    [SerializeField] private LayerMask whatisPlayer;
+    private Vector2 applyDamageBottomLeft, applyDamageTopRight;
+    private float[] attackDeatils = new float[2];
+
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -69,6 +76,8 @@ public class EnemyController : MonoBehaviour
     {
         groundDetected = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
         wallDetected = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, whatIsGround);
+
+        CheckApplyDamage();
 
         if (!groundDetected || wallDetected)
         {
@@ -162,6 +171,27 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    private void CheckApplyDamage()
+    {
+        if (Time.time > lastApplyDamageTime + applyDamageCooldown)
+        {
+            applyDamageBottomLeft.Set(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
+            applyDamageTopRight.Set(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y + (applyDamageHeight / 2));
+
+            Collider2D hit = Physics2D.OverlapArea(applyDamageBottomLeft, applyDamageTopRight, whatisPlayer);
+
+            if (hit != null)
+            {
+                lastApplyDamageTime = Time.time;
+                attackDeatils[0] = applyDamage;
+                attackDeatils[1] = rb.transform.position.x;
+                hit.SendMessage("Damage", attackDeatils);
+            }
+        }
+    }
+
+
+
     private void SwitchState(State state)
     {
         switch (currentState)
@@ -197,6 +227,16 @@ public class EnemyController : MonoBehaviour
     {
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
         Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + groundCheckDistance, wallCheck.position.y));
+
+        Vector2 botLeft = new Vector2(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
+        Vector2 botRight = new Vector2(applyDamageCheck.position.x + (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
+        Vector2 topRight = new Vector2(applyDamageCheck.position.x + (applyDamageWidth / 2), applyDamageCheck.position.y + (applyDamageHeight / 2));
+        Vector2 topLeft = new Vector2(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y + (applyDamageHeight / 2));
+
+        Gizmos.DrawLine(botLeft, botRight);
+        Gizmos.DrawLine(topRight, botRight);
+        Gizmos.DrawLine(topRight, topLeft);
+        Gizmos.DrawLine(botLeft, topLeft);
     }
 
 }
