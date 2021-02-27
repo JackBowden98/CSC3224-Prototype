@@ -17,6 +17,9 @@ public class PlayerCombatController : MonoBehaviour
     // if there is an iput and is attacking
     private bool gotInput, isAttacking;
 
+    // the parameters passed to the object being damaged
+    private float[] attackDetails = new float[2];
+
     // time of the last input
     private float lastInputTime = Mathf.NegativeInfinity;
 
@@ -70,10 +73,12 @@ public class PlayerCombatController : MonoBehaviour
     private void CheckAttackHitbox()
     {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(m_HitCheck.position, k_HitRadius, m_WhatIsDamagable);
+        attackDetails[0] = attackDamage;
+        attackDetails[1] = transform.position.x;
         foreach (Collider2D collider in hitColliders)
         {
             Debug.Log("Hit!");
-            collider.SendMessage("Damage", attackDamage);
+            collider.SendMessage("Damage", attackDetails);
         }
     }
 
