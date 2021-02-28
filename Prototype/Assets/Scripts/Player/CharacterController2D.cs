@@ -36,9 +36,14 @@ public class CharacterController2D : MonoBehaviour
 	private Vector3 m_Velocity = Vector3.zero;
 
 	private bool knockback;
-	private float knockbackStartTime;
+    private float knockbackStartTime;
 	[SerializeField] private float knockbackDuration;
 	[SerializeField] private Vector2 knockbackSpeed;
+
+	private bool recoil;
+	private float recoilStartTime;
+	[SerializeField] private float recoilDuration;
+	[SerializeField] private float recoilSpeed;
 
 	[Header("Events")]
 	[Space]
@@ -173,6 +178,23 @@ public class CharacterController2D : MonoBehaviour
 
 		}
     }
+
+	public void Recoil(int direction)
+	{
+		recoil = true;
+		recoilStartTime = Time.time;
+		m_Rigidbody2D.velocity = new Vector2(recoilSpeed * direction, m_Rigidbody2D.velocity.y);
+	}
+
+	private void CheckRecoil()
+	{
+		if (Time.time >= recoilStartTime + recoilDuration && recoil)
+		{
+			recoil = false;
+			m_Rigidbody2D.velocity = new Vector2(0.0f, m_Rigidbody2D.velocity.y);
+
+		}
+	}
 
 	private void SetWallJumpFalse()
     {

@@ -21,6 +21,7 @@ public class PlayerCombatController : MonoBehaviour
     private float[] attackDetails = new float[2];
     HitPause hitPause;
 
+
     // time of the last input
     private float lastInputTime = Mathf.NegativeInfinity;
 
@@ -85,6 +86,8 @@ public class PlayerCombatController : MonoBehaviour
             Debug.Log("Hit!");
             collider.SendMessage("Damage", attackDetails);
         }
+        int direction = cc.GetFacingDirection();
+        cc.Recoil(-direction);
     }
 
     private void FinishAttack()
