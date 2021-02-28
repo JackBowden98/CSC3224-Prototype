@@ -19,6 +19,7 @@ public class PlayerCombatController : MonoBehaviour
 
     // the parameters passed to the object being damaged
     private float[] attackDetails = new float[2];
+    HitPause hitPause;
 
     // time of the last input
     private float lastInputTime = Mathf.NegativeInfinity;
@@ -32,6 +33,7 @@ public class PlayerCombatController : MonoBehaviour
         anim = GetComponent<Animator>();
         anim.SetBool("CanAttack", combatEnabled);
         cc = GetComponent<CharacterController2D>();
+        hitPause = GetComponent <HitPause>();
     }
 
     private void Update()
@@ -95,6 +97,7 @@ public class PlayerCombatController : MonoBehaviour
     private void Damage(float[] attackDetails)
     {
         int direction;
+        hitPause.Pause();
 
         if (attackDetails[1] < transform.position.x)
         {

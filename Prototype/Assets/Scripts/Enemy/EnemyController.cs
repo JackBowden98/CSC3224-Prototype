@@ -37,9 +37,10 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private Transform applyDamageCheck;
     [SerializeField] private float lastApplyDamageTime, applyDamageCooldown, applyDamage, applyDamageWidth, applyDamageHeight;
-    [SerializeField] private LayerMask whatisPlayer;
+    [SerializeField] private LayerMask whatIsPlayer;
     private Vector2 applyDamageBottomLeft, applyDamageTopRight;
     private float[] attackDeatils = new float[2];
+    HitPause hitPause;
 
 
     private void Start()
@@ -48,6 +49,7 @@ public class EnemyController : MonoBehaviour
         facingDirection = 1;
         anim = GetComponent<Animator>();
         currentHealth = maxHealth;
+        hitPause = GetComponent<HitPause>();
     }
 
     private void Update()
@@ -162,10 +164,12 @@ public class EnemyController : MonoBehaviour
         // enemy is still alive
         if (currentHealth > 0.0f)
         {
+            hitPause.Pause();
             SwitchState(State.Knockback);
         }
         else if (currentHealth <= 0.0f)
         {
+            hitPause.Pause();
             SwitchState(State.Dead);
         }
 
@@ -178,7 +182,7 @@ public class EnemyController : MonoBehaviour
             applyDamageBottomLeft.Set(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
             applyDamageTopRight.Set(applyDamageCheck.position.x + (applyDamageWidth / 2), applyDamageCheck.position.y + (applyDamageHeight / 2));
 
-            Collider2D hit = Physics2D.OverlapArea(applyDamageBottomLeft, applyDamageTopRight, whatisPlayer);
+            Collider2D hit = Physics2D.OverlapArea(applyDamageBottomLeft, applyDamageTopRight, whatIsPlayer);
 
             if (hit != null)
             {

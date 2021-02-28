@@ -1055,6 +1055,7 @@ GameObject:
   - component: {fileID: 820667358}
   - component: {fileID: 820667355}
   - component: {fileID: 820667356}
+  - component: {fileID: 820667359}
   m_Layer: 12
   m_Name: Player
   m_TagString: Player
@@ -1146,7 +1147,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 4
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -1164,7 +1165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08f91df3bd212f429df17f53ce2f364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_JumpForce: 800
+  m_JumpForce: 900
   m_MovementSmoothing: 0.05
   m_WhatIsGround:
     serializedVersion: 2
@@ -1174,11 +1175,11 @@ MonoBehaviour:
   m_FrontCheck: {fileID: 1230588970}
   wallSlidingSpeed: 2.5
   canFlip: 1
-  xWallForce: 10
-  yWallForce: 10
+  xWallForce: 12
+  yWallForce: 12
   wallJumpForceDuration: 0.16
   knockbackDuration: 0.2
-  knockbackSpeed: {x: 10, y: 5}
+  knockbackSpeed: {x: 18, y: 12}
   OnLandEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1279,6 +1280,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &820667359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820667350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bab420fd3145964d84780b3ccfb4797, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.1
 --- !u!1 &873010974
 GameObject:
   m_ObjectHideFlags: 0
@@ -4563,6 +4577,7 @@ GameObject:
   - component: {fileID: 1413583229}
   - component: {fileID: 1413583228}
   - component: {fileID: 1413583233}
+  - component: {fileID: 1413583234}
   m_Layer: 10
   m_Name: Enemy
   m_TagString: Enemy
@@ -4711,21 +4726,34 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 535
-  groundCheckDistance: 1
+  groundCheckDistance: 3
   wallCheckDistance: 0.1
-  movementSpeed: 5
+  movementSpeed: 3.5
   maxHealth: 100
   knockbackDuration: 0.1
-  knockbackSpeed: {x: 10, y: 6}
+  knockbackSpeed: {x: 15, y: 5}
   applyDamageCheck: {fileID: 1469636754}
   lastApplyDamageTime: 0
-  applyDamageCooldown: 0.2
+  applyDamageCooldown: 0.5
   applyDamage: 10
-  applyDamageWidth: 0.93
+  applyDamageWidth: 0.63
   applyDamageHeight: 1.81
-  whatisPlayer:
+  whatIsPlayer:
     serializedVersion: 2
     m_Bits: 4096
+--- !u!114 &1413583234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413583227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bab420fd3145964d84780b3ccfb4797, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.1
 --- !u!1 &1469636753
 GameObject:
   m_ObjectHideFlags: 0
