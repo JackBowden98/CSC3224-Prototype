@@ -176,7 +176,7 @@ public class EnemyController : MonoBehaviour
         if (Time.time > lastApplyDamageTime + applyDamageCooldown)
         {
             applyDamageBottomLeft.Set(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
-            applyDamageTopRight.Set(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y + (applyDamageHeight / 2));
+            applyDamageTopRight.Set(applyDamageCheck.position.x + (applyDamageWidth / 2), applyDamageCheck.position.y + (applyDamageHeight / 2));
 
             Collider2D hit = Physics2D.OverlapArea(applyDamageBottomLeft, applyDamageTopRight, whatisPlayer);
 
@@ -226,7 +226,7 @@ public class EnemyController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
-        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + groundCheckDistance, wallCheck.position.y));
+        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
 
         Vector2 botLeft = new Vector2(applyDamageCheck.position.x - (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
         Vector2 botRight = new Vector2(applyDamageCheck.position.x + (applyDamageWidth / 2), applyDamageCheck.position.y - (applyDamageHeight / 2));
