@@ -21,6 +21,12 @@ public class PlayerCombatController : MonoBehaviour
     private float[] attackDetails = new float[2];
     HitPause hitPause;
 
+    [SerializeField] private float maxHealth;
+    private float currentHealth;
+
+    bool invincible;
+
+
 
     // time of the last input
     private float lastInputTime = Mathf.NegativeInfinity;
@@ -35,12 +41,19 @@ public class PlayerCombatController : MonoBehaviour
         anim.SetBool("CanAttack", combatEnabled);
         cc = GetComponent<CharacterController2D>();
         hitPause = GetComponent <HitPause>();
+        currentHealth = maxHealth;
+        invincible = false;
     }
 
     private void Update()
     {
         CheckCombatInput();
         checkAttacks();
+
+        if (Input.GetKeyDown("o"))
+        {
+            MakeInvincible();
+        }
     }
 
     // checks the input and enables combat
@@ -99,19 +112,37 @@ public class PlayerCombatController : MonoBehaviour
 
     private void Damage(float[] attackDetails)
     {
-        int direction;
-        hitPause.Pause();
-
-        if (attackDetails[1] < transform.position.x)
+        if (!invincible)
         {
-            direction = 1;
-        }
-        else
-        {
-            direction = -1;
-        }
+            currentHealth -= attackDetails[0];
+            int direction;
+            hitPause.Pause();
+            HealthManager.instance.SetHealth(currentHealth);
 
-        cc.KnockBack(direction);
+            if (attackDetails[1] < transform.position.x)
+            {
+                direction = 1;
+            }
+            else
+            {
+                direction = -1;
+            }
+
+            cc.KnockBack(direction);
+
+            if (currentHealth <= 0.0f)
+            {
+                hitPause.Pause();
+                string level = "Death";
+                // go to complete screen
+                Application.LoadLevel(level);
+            }
+        }
+    }
+
+    public void MakeInvincible()
+    {
+        invincible = true;
     }
 
     private void OnDrawGizmos()

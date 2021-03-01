@@ -42,6 +42,9 @@ public class EnemyController : MonoBehaviour
     private float[] attackDeatils = new float[2];
     HitPause hitPause;
 
+    public GameObject theSoulDrop;
+    public Transform soulDropPoint;
+
 
     private void Start()
     {
@@ -124,6 +127,7 @@ public class EnemyController : MonoBehaviour
     // Knockback state
     private void EnterDeadState()
     {
+        GameObject soul = Instantiate(theSoulDrop, soulDropPoint.position, soulDropPoint.rotation);
         Destroy(gameObject);
     }
 
@@ -148,29 +152,33 @@ public class EnemyController : MonoBehaviour
     // use array to receive multiple parameters from player object
     private void Damage(float[] attackDetails)
     {
-        // 0 in the array is the amount of damage being recieved
-        currentHealth -= attackDetails[0];
+        if (gameObject != null)
+        {
 
-        // calculates whether player is on left or right side of the enemy
-        if (attackDetails[1] > rb.transform.position.x)
-        {
-            damageDirection = -1;
-        }
-        else
-        {
-            damageDirection = 1;
-        }
+            // 0 in the array is the amount of damage being recieved
+            currentHealth -= attackDetails[0];
 
-        // enemy is still alive
-        if (currentHealth > 0.0f)
-        {
-            hitPause.Pause();
-            SwitchState(State.Knockback);
-        }
-        else if (currentHealth <= 0.0f)
-        {
-            hitPause.Pause();
-            SwitchState(State.Dead);
+            // calculates whether player is on left or right side of the enemy
+            if (attackDetails[1] > rb.transform.position.x)
+            {
+                damageDirection = -1;
+            }
+            else
+            {
+                damageDirection = 1;
+            }
+
+            // enemy is still alive
+            if (currentHealth > 0.0f)
+            {
+                //hitPause.Pause();
+                SwitchState(State.Knockback);
+            }
+            else if (currentHealth <= 0.0f)
+            {
+                hitPause.Pause();
+                SwitchState(State.Dead);
+            }
         }
 
     }

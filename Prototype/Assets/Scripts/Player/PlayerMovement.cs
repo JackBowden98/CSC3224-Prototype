@@ -12,6 +12,9 @@ public class PlayerMovement : MonoBehaviour {
 	float horizontalMove = 0f;
 	bool jump = false;
 
+	public CollectableManager cm;
+
+
 	// Update is called once per frame
 	void Update () {
 
@@ -31,6 +34,11 @@ public class PlayerMovement : MonoBehaviour {
 			animator.SetBool("IsFalling", true);
 			animator.SetBool("IsSliding", false);
 		}
+
+		if (Input.GetKeyDown("p"))
+		{
+			cm.CheatAllSouls();
+        }
 	}
 
 	public void OnLanding ()

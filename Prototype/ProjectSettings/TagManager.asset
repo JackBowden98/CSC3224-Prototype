@@ -7,6 +7,7 @@ TagManager:
   - Soul
   - Enemy
   - Manager
+  - SoulsCount
   layers:
   - Default
   - TransparentFX
